@@ -1,5 +1,13 @@
-import { Stack } from "expo-router";
+import {Slot} from "expo-router";
+
+import AuthBackground from "@/src/components/auth/AuthBackground";
 
 export default function AuthLayout() {
-  return <Stack />;
+  return (
+    <>
+      <AuthBackground/>
+      <Slot />
+    </>
+  );
 }
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { sleep } from "@/src/utils";
 import { router, Stack } from "expo-router";
 import {
@@ -10,7 +10,7 @@ import {
   Carousel,
 } from "react-native-ui-lib";
 import { Image } from "expo-image";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Keyboard } from "react-native";
 import { carouselData } from "@/assets/data/carousel";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { DotIndicator } from "react-native-indicators";
@@ -23,7 +23,15 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
-
+  const [shownKeyboard, setShownKeyboard] = useState(false);
+  useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", () => setShownKeyboard(true));
+    Keyboard.addListener("keyboardDidHide", () => setShownKeyboard(false));
+    return () => {
+      Keyboard.removeAllListeners("keyboardDidShow");
+      Keyboard.removeAllListeners("keyboardDidHide");
+    };
+  }, []);
   async function onSignIn() {
     try {
       setLoading(true);
@@ -37,105 +45,85 @@ export default function SignIn() {
   }
 
   return (
-    <>
-      <View flex centerV marginH-20>
-        <Stack.Screen options={{ title: "Sign In", headerShown: false }} />
-        <View padding-10 gap-10 style={styles.card}>
-          <View center>
-            <Ionicons name="barbell-sharp" size={48} color="white" />
-            <Text text30 blue60>
-              Fitrack
-            </Text>
-          </View>
-
-          <TextField
-            value={email}
-            onChangeText={setEmail}
-            text60
-            enableErrors
-            label={"Email:"}
-            placeholder={"john@gmail.com"}
-            placeholderTextColor={"grey"}
-            fieldStyle={styles.input}
-            labelStyle={styles.label}
-            validateOnBlur
-            validate={["required", "email"]}
-            validationMessage={["email is required", "Email is invalid"]}
-            validationMessageStyle={{ color: Colors.red30, fontSize: 16 }}
-            onChangeValidity={(isValid) => setValidEmail(isValid)}
-            maxLength={30}
-          />
-          <TextField
-            value={password}
-            onChangeText={setPassword}
-            text60
-            enableErrors
-            secureTextEntry={!showPassword}
-            label={"Password:"}
-            fieldStyle={styles.input}
-            labelStyle={styles.label}
-            validateOnBlur
-            validate={["required", (value: string) => value.length > 5]}
-            validationMessage={[
-              "password is required",
-              "password is too short",
-            ]}
-            validationMessageStyle={{ color: Colors.red30, fontSize: 16 }}
-            onChangeValidity={(isValid) => setValidPassword(isValid)}
-            maxLength={30}
-            trailingAccessory={
-              <MaterialCommunityIcons
-                name={showPassword ? "eye-off" : "eye"}
-                size={24}
-                color="#aaa"
-                onPress={() => setShowPassword(!showPassword)}
-              />
-            }
-          />
-
-          <Button
-            size={Button.sizes.medium}
-            backgroundColor={Colors.blue30}
-            disabled={!(validEmail && validPassword)}
-            onPress={() => onSignIn()}
-          >
-            {loading ? (
-              <DotIndicator color={"white"} count={3} size={10} />
-            ) : (
-              <Text color={"white"}>Sign In</Text>
-            )}
-          </Button>
-
-          <Button
-            label={"Create an account"}
-            size={Button.sizes.medium}
-            outline
-            outlineColor={"white"}
-            onPress={() => router.push("/(auth)/sign-up")}
-            color={Colors.white}
-          />
+    <View
+      padding-10
+      flex
+      marginH-20
+      style={{ justifyContent: shownKeyboard ? "flex-start" : "center" }}
+    >
+      <View padding-10 gap-10 style={styles.formContainer}>
+        <View center>
+          <Ionicons name="barbell-sharp" size={48} color="white" />
+          <Text text30 blue60>
+            Fitrack
+          </Text>
         </View>
-      </View>
-      <View style={styles.carouselContainer}>
-        <Carousel
-          onChangePage={() => console.log("page changed")}
-          autoplay
-          loop
-          initialPage={1}
+
+        <TextField
+          value={email}
+          onChangeText={setEmail}
+          text60
+          enableErrors
+          label={"Email:"}
+          placeholder={"john@gmail.com"}
+          placeholderTextColor={"grey"}
+          fieldStyle={styles.input}
+          labelStyle={styles.label}
+          validateOnBlur
+          validate={["required", "email"]}
+          validationMessage={["email is required", "Email is invalid"]}
+          validationMessageStyle={{ color: Colors.red30, fontSize: 16 }}
+          onChangeValidity={(isValid) => setValidEmail(isValid)}
+          maxLength={30}
+        />
+        <TextField
+          value={password}
+          onChangeText={setPassword}
+          text60
+          enableErrors
+          secureTextEntry={!showPassword}
+          label={"Password:"}
+          fieldStyle={styles.input}
+          labelStyle={styles.label}
+          validateOnBlur
+          validate={["required", (value: string) => value.length > 5]}
+          validationMessage={["password is required", "password is too short"]}
+          validationMessageStyle={{ color: Colors.red30, fontSize: 16 }}
+          onChangeValidity={(isValid) => setValidPassword(isValid)}
+          maxLength={30}
+          trailingAccessory={
+            <MaterialCommunityIcons
+              name={showPassword ? "eye-off" : "eye"}
+              size={24}
+              color="#aaa"
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
+        />
+
+        <Button
+          size={Button.sizes.large}
+          backgroundColor={Colors.blue30}
+          disabled={!(validEmail && validPassword)}
+          onPress={() => onSignIn()}
         >
-          {carouselData.map((item) => (
-            <View key={item.id}>
-              <Image
-                key={item.id}
-                style={styles.image}
-                contentFit={"cover"}
-                source={item.imageUrl}
-              />
-            </View>
-          ))}
-        </Carousel>
+          {loading ? (
+            <DotIndicator color={"white"} count={3} size={10} />
+          ) : (
+            <Text color={"white"}>Sign In</Text>
+          )}
+        </Button>
+
+        <Button
+          label={"Create an account"}
+          size={Button.sizes.large}
+          outline
+          outlineColor={"white"}
+          onPress={() => router.push("/(auth)/sign-up")}
+          color={Colors.white}
+        />
       </View>
-    </>
+    </View>
   );
 }
 
@@ -151,18 +139,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 10,
   },
-  carouselContainer: {
-    position: "absolute",
-    width: "100%",
-    zIndex: -1,
-  },
-  card: {
+
+  formContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 30,
     justifyContent: "center",
-  },
-  image: {
-    width: "100%",
-    aspectRatio: 0.5,
   },
 });
