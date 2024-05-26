@@ -42,6 +42,15 @@ export const workouts :Workout[] = [
         restTime: 60,
         weight: 0,
       },
+      {
+        id: 5,
+
+        name: "Crunches",
+        sets: 3,
+        reps: 20,
+        restTime: 60,
+        weight: 0,
+      },
     ],
   },
   {

@@ -1,0 +1,32 @@
+import { Link, Stack } from "expo-router";
+import { Pressable } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { Colors } from "@/src/constants/Colors";
+
+export default function WorkoutsLayout() {
+  return (
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{
+          title: "Workouts",
+          headerRight: () => (
+            <Link href="/(user)/workouts/create" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="plus-square-o"
+                    size={25}
+                    color={Colors.light.tint}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
+
+    </Stack>
+  );
+}
