@@ -43,7 +43,6 @@ export default function SignIn() {
       setLoading(false);
     }
   }
-
   return (
     <View
       padding-10

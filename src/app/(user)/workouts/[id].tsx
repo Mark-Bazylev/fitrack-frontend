@@ -20,7 +20,7 @@ export default function WorkoutDetailsScreen() {
   return (
     <View flex>
       <Stack.Screen options={{ title: `${workout.workoutName} Details` }} />
-      <ExercisesList workout={workout} />
+      <ExercisesList exercises={workout.exercises} />
     </View>
   );
 }
